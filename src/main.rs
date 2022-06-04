@@ -1,4 +1,7 @@
-use image::{RgbImage, ImageBuffer, Rgb, ImageResult};
+use image::{ImageBuffer, ImageResult, Rgb, RgbImage};
+
+mod math;
+use math::Vector3;
 
 fn main() -> ImageResult<()> {
     const WIDTH: u32 = 512;
