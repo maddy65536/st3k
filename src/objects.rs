@@ -20,8 +20,8 @@ impl Sphere {
     pub fn ray_intersection(&self, origin: &Vector3, direction: &Vector3) -> f64 {
         let center_to_origin = origin.sub(&self.center);
 
-        let a = direction.dot(&direction);
-        let b = 2.0 * center_to_origin.dot(&direction);
+        let a = direction.dot(direction);
+        let b = 2.0 * center_to_origin.dot(direction);
         let c = center_to_origin.dot(&center_to_origin) - self.radius * self.radius;
 
         let discriminant = b * b - 4.0 * a * c;

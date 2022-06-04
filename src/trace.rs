@@ -20,7 +20,7 @@ pub fn trace_ray(direction: &Vector3, scene: &Scene) -> [u8; 3] {
         let mut normal = point.sub(&sphere.center);
         normal = normal.scale(1.0 / normal.length());
         
-        Vector3::from_color(sphere.color).scale(compute_lighting(&point, &normal, &scene)).to_color()
+        Vector3::from_color(sphere.color).scale(compute_lighting(&point, &normal, scene)).to_color()
     } else {
         scene.bg_color
     }
