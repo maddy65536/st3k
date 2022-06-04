@@ -1,18 +1,32 @@
+#![allow(dead_code)]
 use image::{ImageBuffer, ImageResult, Rgb, RgbImage};
 
 mod math;
-use math::Vector3;
+mod scene;
+mod objects;
+mod trace;
+use scene::Scene;
 
 fn main() -> ImageResult<()> {
-    const WIDTH: u32 = 512;
-    const HEIGHT: u32 = 512;
+    const CANVAS_SIZE: [u32; 2] = [512, 512];
 
     // create image buffer to store results
-    let mut img: RgbImage = ImageBuffer::new(WIDTH, HEIGHT);
+    let mut img: RgbImage = ImageBuffer::new(CANVAS_SIZE[0], CANVAS_SIZE[1]);
+    let scene = Scene::default_scene();
 
-    for x in 0..WIDTH {
-        for y in 0..HEIGHT {
-            img.put_pixel(x, y, Rgb([0, 255, 0]));
+    for x in 0..CANVAS_SIZE[0] {
+        for y in 0..CANVAS_SIZE[1] {
+            let direction = math::canvas_to_viewport(
+                CANVAS_SIZE[0]/2 + x,
+                CANVAS_SIZE[1]/2 + y, 
+                CANVAS_SIZE,
+                scene.view_size,
+                scene.proj_plane,
+            );
+            
+            let color = trace::trace_ray(&direction, &scene);
+
+            img.put_pixel(x, y, Rgb(color));
         }
     }
 
