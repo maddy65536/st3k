@@ -2,8 +2,8 @@ use crate::math::Vector3;
 
 // objects and their associated functions, like intersections
 pub struct Sphere {
-    center: Vector3,
-    radius: f64,
+    pub center: Vector3,
+    pub radius: f64,
     pub color: [u8; 3],
 }
 

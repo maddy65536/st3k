@@ -21,7 +21,7 @@ impl Vector3 {
         self.dot(self).sqrt()
     }
 
-    pub fn scale(&self, scalar: &f64) -> Vector3 {
+    pub fn scale(&self, scalar: f64) -> Vector3 {
         Vector3::new(
             self.els[0] * scalar,
             self.els[1] * scalar,

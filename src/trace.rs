@@ -16,9 +16,27 @@ pub fn trace_ray(direction: &Vector3, scene: &Scene) -> [u8; 3] {
     }
 
     if let Some(sphere) = closest_sphere {
-        sphere.color
+        let point = scene.cam_pos.add(&direction.scale(closest_t));
+        let mut normal = point.sub(&sphere.center);
+        normal = normal.scale(1.0 / normal.length());
+        
+        Vector3::from_color(sphere.color).scale(compute_lighting(&point, &normal, &scene)).to_color()
     } else {
         scene.bg_color
     }
 }
 
+fn compute_lighting(point: &Vector3, normal: &Vector3, scene: &Scene) -> f64 {
+    let mut intensity: f64 = 0.0;
+
+    for light in scene.lights.iter() {
+        let light_dir = light.get_direction(point);
+        let normal_dot_dir = normal.dot(&light_dir);
+
+        if normal_dot_dir > 0.0 {
+            intensity += light.intensity * normal_dot_dir / (normal.length() * light_dir.length())
+        }
+    }
+
+    intensity + scene.amb_light
+}
