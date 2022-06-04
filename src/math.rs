@@ -1,6 +1,4 @@
 // basic implementations of math stuff for doing math
-use std::cmp;
-
 #[derive(Debug)]
 pub struct Vector3 {
     els: Vec<f64>,
@@ -9,6 +7,14 @@ pub struct Vector3 {
 impl Vector3 {
     pub fn new(x: f64, y: f64, z: f64) -> Vector3 {
         Vector3 { els: vec![x, y, z] }
+    }
+
+    pub fn fromColor(color: [u8; 3]) -> Vector3 {
+        Vector3::new(
+            color[0] as f64,
+            color[1] as f64,
+            color[2] as f64,
+        )
     }
 
     pub fn dot(&self, other: &Vector3) -> f64 {
