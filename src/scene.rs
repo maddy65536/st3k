@@ -1,7 +1,7 @@
 // struct to hold the scene's data
+use crate::lights::PointLight;
 use crate::math::Vector3;
 use crate::objects::Sphere;
-use crate::lights::PointLight;
 
 pub struct Scene {
     pub bg_color: [u8; 3],
@@ -23,12 +23,13 @@ impl Scene {
             view_size: [1.0, 1.0],
             view_frustum: [1.0, f64::INFINITY],
             amb_light: 0.2,
-            spheres: vec![
-                Sphere::new(Vector3::new(0.0, 0.0, 3.0), 1.0, [164, 116, 212]),
-            ],
-            lights: vec![
-                PointLight::new(0.8, Vector3::new(2.0, 1.0, 0.0)),
-            ], 
+            spheres: vec![Sphere::new(
+                Vector3::new(0.0, 0.0, 3.0),
+                1.0,
+                [164, 116, 212],
+                Some(10.0),
+            )],
+            lights: vec![PointLight::new(0.8, Vector3::new(2.0, 1.0, 0.0))],
         }
     }
 }

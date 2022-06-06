@@ -7,12 +7,9 @@ pub struct PointLight {
 
 impl PointLight {
     pub fn new(intensity: f64, pos: Vector3) -> PointLight {
-        PointLight {
-            intensity,
-            pos,
-        }
+        PointLight { intensity, pos }
     }
-    
+
     pub fn get_direction(&self, point: &Vector3) -> Vector3 {
         self.pos.sub(point)
     }

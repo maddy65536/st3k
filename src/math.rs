@@ -50,7 +50,13 @@ impl Vector3 {
     }
 }
 
-pub fn canvas_to_viewport(x: i32, y: i32, canvas: [u32; 2], view: [f64; 2], proj_plane: f64) -> Vector3 {
+pub fn canvas_to_viewport(
+    x: i32,
+    y: i32,
+    canvas: [u32; 2],
+    view: [f64; 2],
+    proj_plane: f64,
+) -> Vector3 {
     Vector3::new(
         (x as f64) * view[0] / (canvas[0] as f64),
         (y as f64) * view[0] / (canvas[1] as f64),

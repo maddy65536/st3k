@@ -19,14 +19,28 @@ pub fn trace_ray(direction: &Vector3, scene: &Scene) -> [u8; 3] {
         let point = scene.cam_pos.add(&direction.scale(closest_t));
         let mut normal = point.sub(&sphere.center);
         normal = normal.scale(1.0 / normal.length());
-        
-        Vector3::from_color(sphere.color).scale(compute_lighting(&point, &normal, scene)).to_color()
+
+        Vector3::from_color(sphere.color)
+            .scale(compute_lighting(
+                &point,
+                &normal,
+                &direction.scale(-1.0),
+                scene,
+                sphere.specular,
+            ))
+            .to_color()
     } else {
         scene.bg_color
     }
 }
 
-fn compute_lighting(point: &Vector3, normal: &Vector3, scene: &Scene) -> f64 {
+fn compute_lighting(
+    point: &Vector3,
+    normal: &Vector3,
+    obj_to_cam: &Vector3,
+    scene: &Scene,
+    specular: Option<f64>,
+) -> f64 {
     let mut intensity: f64 = 0.0;
 
     for light in scene.lights.iter() {
@@ -35,6 +49,15 @@ fn compute_lighting(point: &Vector3, normal: &Vector3, scene: &Scene) -> f64 {
 
         if normal_dot_dir > 0.0 {
             intensity += light.intensity * normal_dot_dir / (normal.length() * light_dir.length())
+        }
+
+        if let Some(spec) = specular {
+            let r = normal.scale(2.0 * normal.dot(&light_dir)).sub(&light_dir);
+            let r_dot_obj_to_cam = r.dot(obj_to_cam);
+            if r_dot_obj_to_cam > 0.0 {
+                intensity += light.intensity
+                    * (r_dot_obj_to_cam / (r.length() * obj_to_cam.length())).powf(spec);
+            }
         }
     }
 
