@@ -6,15 +6,23 @@ pub struct Sphere {
     pub radius: f64,
     pub color: [u8; 3],
     pub specular: Option<f64>,
+    pub reflective: f64,
 }
 
 impl Sphere {
-    pub fn new(center: Vector3, radius: f64, color: [u8; 3], specular: Option<f64>) -> Sphere {
+    pub fn new(
+        center: Vector3,
+        radius: f64,
+        color: [u8; 3],
+        specular: Option<f64>,
+        reflective: f64,
+    ) -> Sphere {
         Sphere {
             center,
             radius,
             color,
             specular,
+            reflective,
         }
     }
 

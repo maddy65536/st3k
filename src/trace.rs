@@ -3,27 +3,48 @@ use crate::objects::Sphere;
 use crate::scene::Scene;
 
 // function that traces the rays, it gets its own file because idk where else to put it
-pub fn trace_ray(direction: &Vector3, scene: &Scene) -> [u8; 3] {
-    let (closest_sphere, closest_t) =
-        closest_intersection(&scene.cam_pos, direction, scene, scene.view_frustum[0]);
+pub fn trace_ray(
+    pos: &Vector3,
+    direction: &Vector3,
+    scene: &Scene,
+    t_min: f64,
+    recursion_depth: u8,
+) -> [u8; 3] {
+    let (closest_sphere, closest_t) = closest_intersection(pos, direction, scene, t_min);
 
-    if let Some(sphere) = closest_sphere {
-        let point = scene.cam_pos.add(&direction.scale(closest_t));
-        let mut normal = point.sub(&sphere.center);
-        normal = normal.scale(1.0 / normal.length());
-
-        Vector3::from_color(sphere.color)
-            .scale(compute_lighting(
-                &point,
-                &normal,
-                &direction.scale(-1.0),
-                scene,
-                sphere.specular,
-            ))
-            .to_color()
-    } else {
-        scene.bg_color
+    if closest_sphere.is_none() {
+        return scene.bg_color;
     }
+
+    let sphere = closest_sphere.unwrap();
+
+    let point = pos.add(&direction.scale(closest_t));
+    let mut normal = point.sub(&sphere.center);
+    normal = normal.scale(1.0 / normal.length());
+
+    let base_color = Vector3::from_color(sphere.color).scale(compute_lighting(
+        &point,
+        &normal,
+        &direction.scale(-1.0),
+        scene,
+        sphere.specular,
+    ));
+
+    if recursion_depth == 0 || sphere.reflective <= 0.0 {
+        return base_color.to_color();
+    }
+
+    let r = reflect_ray(&direction.scale(-1.0), &normal);
+    let reflected_color = trace_ray(&point, &r, scene, 0.001, recursion_depth - 1);
+
+    base_color
+        .scale(1.0 - sphere.reflective)
+        .add(&Vector3::from_color(reflected_color).scale(sphere.reflective))
+        .to_color()
+}
+
+fn reflect_ray(ray: &Vector3, normal: &Vector3) -> Vector3 {
+    normal.scale(2.0 * normal.dot(ray)).sub(ray)
 }
 
 fn closest_intersection<'a>(
@@ -36,7 +57,7 @@ fn closest_intersection<'a>(
     let mut closest_sphere = None;
 
     for sphere in scene.spheres.iter() {
-        let t = sphere.ray_intersection(&point, direction);
+        let t = sphere.ray_intersection(point, direction);
 
         if t > t_min && t < scene.view_frustum[1] && t < closest_t {
             closest_t = t;
@@ -62,7 +83,7 @@ fn compute_lighting(
 
         // shadow check
         let (shadow_sphere, _) = closest_intersection(point, &light_dir, scene, 0.001);
-        if !shadow_sphere.is_none() {
+        if shadow_sphere.is_some() {
             continue;
         }
 

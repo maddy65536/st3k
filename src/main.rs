@@ -25,7 +25,8 @@ fn main() -> ImageResult<()> {
                 scene.proj_plane,
             );
 
-            let color = trace::trace_ray(&direction, &scene);
+            let color =
+                trace::trace_ray(&scene.cam_pos, &direction, &scene, scene.view_frustum[0], 3);
 
             img.put_pixel(x, y, Rgb(color));
         }
