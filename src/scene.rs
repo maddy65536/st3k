@@ -23,13 +23,21 @@ impl Scene {
             view_size: [1.0, 1.0],
             view_frustum: [1.0, f64::INFINITY],
             amb_light: 0.2,
-            spheres: vec![Sphere::new(
-                Vector3::new(0.0, 0.0, 3.0),
-                1.0,
-                [164, 116, 212],
-                Some(10.0),
-            )],
-            lights: vec![PointLight::new(0.8, Vector3::new(2.0, 1.0, 0.0))],
+            spheres: vec![
+                Sphere::new(
+                    Vector3::new(0.0, 0.0, 4.0),
+                    1.0,
+                    [164, 116, 212],
+                    Some(10.0),
+                ),
+                Sphere::new(
+                    Vector3::new(0.0, -5001.0, 0.0),
+                    5000.0,
+                    [232, 142, 218],
+                    None,
+                ),
+            ],
+            lights: vec![PointLight::new(0.8, Vector3::new(2.0, 2.0, 0.0))],
         }
     }
 }
